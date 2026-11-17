@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TransactionResponse",
+  "type": "object",
+  "required": ["id", "accountId", "type", "amount", "country", "status", "riskScore", "triggeredRules", "createdAt"],
+  "properties": {
+    "id": { "type": "integer" },
+    "accountId": { "type": "integer" },
+    "type": { "enum": ["DEPOSIT", "WITHDRAWAL", "PAYMENT"] },
+    "amount": { "type": "number", "exclusiveMinimum": 0 },
+    "merchant": { "type": ["string", "null"] },
+    "country": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "status": { "enum": ["APPROVED", "FLAGGED", "BLOCKED"] },
+    "riskScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "triggeredRules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "points", "reason"],
+        "properties": {
+          "code": { "type": "string" },
+          "points": { "type": "integer", "minimum": 1 },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "balanceAfter": { "type": ["number", "null"] },
+    "createdAt": { "type": "string" }
+  },
+  "additionalProperties": false
+}

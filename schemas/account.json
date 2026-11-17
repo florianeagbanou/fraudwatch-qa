@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AccountResponse",
+  "type": "object",
+  "required": ["id", "number", "owner", "balance", "currency", "homeCountry", "createdAt"],
+  "properties": {
+    "id": { "type": "integer" },
+    "number": { "type": "string", "pattern": "^FW-\\d{10}$" },
+    "owner": { "type": "string" },
+    "balance": { "type": "number" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "homeCountry": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "createdAt": { "type": "string" }
+  },
+  "additionalProperties": false
+}
