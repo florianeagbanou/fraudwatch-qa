@@ -25,6 +25,12 @@ def sign_up(page: Page) -> str:
     return username
 
 
+def open_account(page: Page) -> None:
+    """Click "Open account" and wait until the account is shown, so the next action has an account to use."""
+    page.get_by_role("button", name="Open account").click()
+    expect(page.get_by_test_id("account")).to_have_count(1)
+
+
 def send(page: Page, type_: str, amount: str, country: str = "CA") -> None:
     page.get_by_label("Type").select_option(type_)
     page.get_by_label("Amount").fill(amount)
@@ -43,8 +49,7 @@ def test_wrong_password_shows_an_error(page: Page):
 def test_customer_opens_account_and_deposits(page: Page):
     sign_up(page)
 
-    page.get_by_role("button", name="Open account").click()
-    expect(page.get_by_test_id("account")).to_have_count(1)
+    open_account(page)
 
     send(page, "DEPOSIT", "250")
 
@@ -55,7 +60,7 @@ def test_customer_opens_account_and_deposits(page: Page):
 
 def test_suspicious_payment_is_explained_to_the_customer(page: Page):
     sign_up(page)
-    page.get_by_role("button", name="Open account").click()
+    open_account(page)
     send(page, "DEPOSIT", "1000")
     expect(page.get_by_test_id("tx-result")).to_contain_text("APPROVED")
 
@@ -69,7 +74,7 @@ def test_suspicious_payment_is_explained_to_the_customer(page: Page):
 
 def test_insufficient_funds_message(page: Page):
     sign_up(page)
-    page.get_by_role("button", name="Open account").click()
+    open_account(page)
 
     send(page, "PAYMENT", "10")
 
@@ -79,7 +84,7 @@ def test_insufficient_funds_message(page: Page):
 def test_analyst_confirms_fraud_from_the_dashboard(page: Page):
     # A customer makes a suspicious payment...
     sign_up(page)
-    page.get_by_role("button", name="Open account").click()
+    open_account(page)
     send(page, "DEPOSIT", "20000")
     send(page, "WITHDRAWAL", "15000", country="US")
     expect(page.get_by_test_id("tx-result")).to_contain_text("BLOCKED")
@@ -102,7 +107,7 @@ def test_analyst_confirms_fraud_from_the_dashboard(page: Page):
 def test_api_values_are_displayed_as_text_not_html(page: Page):
     """Stored XSS check: a merchant name with HTML must not create elements in the page."""
     sign_up(page)
-    page.get_by_role("button", name="Open account").click()
+    open_account(page)
     dialogs = []
     page.on("dialog", lambda d: (dialogs.append(d.message), d.dismiss()))
 
